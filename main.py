@@ -9,7 +9,6 @@ from factory import Factory
 from resource import Resource
 import kivy
 
-
 from kivy.app import App
 from kivy.uix.scatterlayout import ScatterLayout
 
@@ -25,15 +24,13 @@ class GridWidget(Widget):
         self.bind(size=self.update_rect)
         self.gridlines = None
         self.paths = None
-        self.ellipses = []
 
     def update(self, dt):
-        for ellipse in self.ellipses:
-            ellipse.pos = Vector(0, 1) + ellipse.pos
+        self.grid.update(dt)
+        self._paint_paths()
 
     def update_rect(self, instance, value):
         self._paint_gridlines()
-        self._paint_paths()
 
     def _paint_gridlines(self):
         if self.gridlines:
@@ -55,7 +52,22 @@ class GridWidget(Widget):
         for grid_path in self.grid.paths:
             new_grid_path = [self._to_coordinates(*point) for point in grid_path]
             self.paths.add(Line(points=new_grid_path))
+
+            d = 30
+            x, y = self._position_partway_between_two_cells(
+                grid_path.point_agent_is_leaving,
+                grid_path.point_agent_is_approaching,
+                grid_path.distance_to_next_square,
+            )
+            self.paths.add(Ellipse(pos=(x - d / 2, y - d / 2), size=(d, d)))
         self.canvas.add(self.paths)
+
+    def _position_partway_between_two_cells(
+        self, point1: Point, point2: Point, fraction: float
+    ):
+        x1, y1 = self._to_coordinates(*point1)
+        x2, y2 = self._to_coordinates(*point2)
+        return x1 + (x2 - x1) * fraction, y1 + (y2 - y1) * fraction
 
     @property
     def cell_width(self):
@@ -90,14 +102,9 @@ class GridWidget(Widget):
 
     def on_touch_down(self, touch):
         x, y = self._to_grid_coordinates(touch.x, touch.y)
-        with self.canvas:
-            Color(1, 0, 0)
-            d = 30.0
-            self.ellipses.append(Ellipse(pos=(x - d / 2, y - d / 2), size=(d, d)))
-            x_index = self._index_of_closest(x, self.cell_x_centers)
-            y_index = self._index_of_closest(y, self.cell_y_centers)
-            self.grid.paths.append(Path())
-            self.grid.paths[-1].append(Point(x_index, y_index))
+        x_index = self._index_of_closest(x, self.cell_x_centers)
+        y_index = self._index_of_closest(y, self.cell_y_centers)
+        self.grid.paths.append(Path(Point(x_index, y_index)))
 
     def on_touch_move(self, touch):
         x, y = self._to_grid_coordinates(touch.x, touch.y)
@@ -106,7 +113,6 @@ class GridWidget(Widget):
         point = Point(x_index, y_index)
         if self.grid.paths[-1][-1] != point:
             self.grid.paths[-1].append(point)
-        self._paint_paths()
 
 
 class MyPaintApp(App):

@@ -13,3 +13,7 @@ class Grid:
 
     def add_path(self, path: Path):
         self.paths.append(path)
+
+    def update(self, dt):
+        for path in self.paths:
+            path.update(dt)

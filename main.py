@@ -1,4 +1,8 @@
 from copy import deepcopy
+
+from kivy.clock import Clock
+from kivy.vector import Vector
+
 from grid import Grid
 from factory import Factory
 from resource import Resource
@@ -19,6 +23,11 @@ class GridWidget(Widget):
         self.rows = rows
         self.bind(size=self.update_rect)
         self.gridlines = None
+        self.ellipses = []
+
+    def update(self, dt):
+        for ellipse in self.ellipses:
+            ellipse.pos = Vector(0,1) + ellipse.pos
 
     def update_rect(self, instance, value):
         if self.gridlines:
@@ -66,7 +75,8 @@ class GridWidget(Widget):
         with self.canvas:
             Color(1, 0, 0)
             d = 30.
-            Ellipse(pos=(x - d / 2, y - d / 2), size=(d, d))
+            self.ellipses.append(Ellipse(pos=(x - d / 2, y - d / 2), size=(d,
+                                                                          d)))
             touch.ud['line'] = Line(points=(x, y))
 
     def on_touch_move(self, touch):
@@ -79,6 +89,7 @@ class MyPaintApp(App):
     def build(self):
         layout = ScatterLayout(translation_touches=2, do_rotation=False)
         widget = GridWidget(8, size_hint=(1,1))
+        Clock.schedule_interval(widget.update, 1.0/60.0)
         layout.add_widget(widget)
         return layout
 

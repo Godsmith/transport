@@ -4,6 +4,7 @@ from kivy.clock import Clock
 from kivy.vector import Vector
 
 from grid import Grid
+from path import Path, Point
 from factory import Factory
 from resource import Resource
 import kivy
@@ -93,11 +94,19 @@ class GridWidget(Widget):
             Color(1, 0, 0)
             d = 30.0
             self.ellipses.append(Ellipse(pos=(x - d / 2, y - d / 2), size=(d, d)))
-            touch.ud["line"] = Line(points=(x, y))
+            x_index = self._index_of_closest(x, self.cell_x_centers)
+            y_index = self._index_of_closest(y, self.cell_y_centers)
+            self.grid.paths.append(Path())
+            self.grid.paths[-1].append(Point(x_index, y_index))
 
     def on_touch_move(self, touch):
         x, y = self._to_grid_coordinates(touch.x, touch.y)
-        touch.ud["line"].points += [x, y]
+        x_index = self._index_of_closest(x, self.cell_x_centers)
+        y_index = self._index_of_closest(y, self.cell_y_centers)
+        point = Point(x_index, y_index)
+        if self.grid.paths[-1][-1] != point:
+            self.grid.paths[-1].append(point)
+        self._paint_paths()
 
 
 class MyPaintApp(App):

@@ -17,11 +17,13 @@ from kivy.graphics import Color, Ellipse, Line, InstructionGroup
 
 
 class GridWidget(Widget):
-    def __init__(self, rows, size_hint=None):
+    def __init__(self, grid, size_hint=None):
         super(GridWidget, self).__init__(size_hint=size_hint)
-        self.rows = rows
+        self.grid = grid
+        self.rows = self.grid.height
         self.bind(size=self.update_rect)
         self.gridlines = None
+        self.paths = None
         self.ellipses = []
 
     def update(self, dt):
@@ -29,6 +31,10 @@ class GridWidget(Widget):
             ellipse.pos = Vector(0, 1) + ellipse.pos
 
     def update_rect(self, instance, value):
+        self._paint_gridlines()
+        self._paint_paths()
+
+    def _paint_gridlines(self):
         if self.gridlines:
             self.canvas.remove(self.gridlines)
         self.gridlines = InstructionGroup()
@@ -39,6 +45,16 @@ class GridWidget(Widget):
             self.gridlines.add(Line(points=((x, 0), (x, self.height))))
             self.gridlines.add(Line(points=((0, y), (self.width, y))))
         self.canvas.add(self.gridlines)
+
+    def _paint_paths(self):
+        if self.paths:
+            self.canvas.remove(self.paths)
+        self.paths = InstructionGroup()
+        self.paths.add(Color(1, 0, 0))
+        for grid_path in self.grid.paths:
+            new_grid_path = [self._to_coordinates(*point) for point in grid_path]
+            self.paths.add(Line(points=new_grid_path))
+        self.canvas.add(self.paths)
 
     @property
     def cell_width(self):
@@ -63,10 +79,13 @@ class GridWidget(Widget):
         diffs = [abs(value - val) for val in values]
         return diffs.index(min(diffs))
 
+    def _to_coordinates(self, x_index, y_index):
+        return list(self.cell_x_centers)[x_index], list(self.cell_y_centers)[y_index]
+
     def _to_grid_coordinates(self, x, y):
         x_index = self._index_of_closest(x, self.cell_x_centers)
         y_index = self._index_of_closest(y, self.cell_y_centers)
-        return list(self.cell_x_centers)[x_index], list(self.cell_y_centers)[y_index]
+        return self._to_coordinates(x_index, y_index)
 
     def on_touch_down(self, touch):
         x, y = self._to_grid_coordinates(touch.x, touch.y)
@@ -84,7 +103,7 @@ class GridWidget(Widget):
 class MyPaintApp(App):
     def build(self):
         layout = ScatterLayout(translation_touches=2, do_rotation=False)
-        widget = GridWidget(8, size_hint=(1, 1))
+        widget = GridWidget(Grid(8, 8), size_hint=(1, 1))
         Clock.schedule_interval(widget.update, 1.0 / 60.0)
         layout.add_widget(widget)
         return layout

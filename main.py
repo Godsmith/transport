@@ -53,7 +53,7 @@ class GridWidget(Widget):
             new_grid_path = [self._to_coordinates(*point) for point in grid_path]
             self.paths.add(Line(points=new_grid_path))
 
-            d = 30
+            d = 15
             x, y = self._position_partway_between_two_cells(
                 grid_path.point_agent_is_leaving,
                 grid_path.point_agent_is_approaching,
@@ -118,7 +118,7 @@ class GridWidget(Widget):
 class MyPaintApp(App):
     def build(self):
         layout = ScatterLayout(translation_touches=2, do_rotation=False)
-        widget = GridWidget(Grid(8, 8), size_hint=(1, 1))
+        widget = GridWidget(Grid(16, 16), size_hint=(1, 1))
         Clock.schedule_interval(widget.update, 1.0 / 60.0)
         layout.add_widget(widget)
         return layout

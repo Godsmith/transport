@@ -8,7 +8,6 @@ from factory import Factory
 from resource import Resource
 import kivy
 
-kivy.require("1.11.1")  # replace with your current kivy version !
 
 from kivy.app import App
 from kivy.uix.scatterlayout import ScatterLayout

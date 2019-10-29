@@ -6,7 +6,7 @@ venv:
 	venv/Scripts/pip install -r requirements.txt
 
 test:
-    pytest
+	pytest tests
 
 test-coverage:
-    pytest --cov=transport --cov-report html
+	pytest tests --cov=transport --cov-report html

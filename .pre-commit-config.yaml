@@ -17,3 +17,7 @@ repos:
     rev: 3.7.9
     hooks:
     -   id: flake8
+-   repo: https://github.com/pre-commit/mirrors-pylint
+    rev: v2.4.3
+    hooks:
+    -   id: pylint

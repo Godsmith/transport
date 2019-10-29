@@ -13,8 +13,8 @@ from transport.grid import Grid
 class GridWidget(Widget):
     """The main grid of the game."""
 
-    def __init__(self, grid, size_hint=None):
-        super(GridWidget, self).__init__(size_hint=size_hint)
+    def __init__(self, grid):
+        super(GridWidget, self).__init__()
         self.grid = grid
         self.rows = self.grid.height
         self.bind(size=self._repaint_gridlines)
@@ -120,7 +120,7 @@ class MyPaintApp(App):
     def build(self):  # pylint: disable=no-self-use
         """Called when the app is created."""
         layout = ScatterLayout(translation_touches=2, do_rotation=False)
-        widget = GridWidget(Grid(16, 16), size_hint=(1, 1))
+        widget = GridWidget(Grid(16, 16))
         Clock.schedule_interval(widget.update, 1.0 / 60.0)
         layout.add_widget(widget)
         return layout

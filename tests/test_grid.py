@@ -1,7 +1,7 @@
 """Test cases for the grid module."""
 
 # pylint: disable=protected-access
-from main import GridWidget
+from transport.main import GridWidget
 
 
 def test_index_of_closest():

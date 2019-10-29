@@ -5,9 +5,9 @@ from kivy.clock import Clock
 from kivy.graphics import Color, Ellipse, Line, InstructionGroup
 from kivy.uix.scatterlayout import ScatterLayout
 from kivy.uix.widget import Widget
+from transport.path import Path, Point
 
-from grid import Grid
-from path import Path, Point
+from transport.grid import Grid
 
 
 class GridWidget(Widget):

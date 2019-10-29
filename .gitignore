@@ -1,4 +1,15 @@
+# Python
 __pycache__/
-.idea/
+
+# Virtual environment
 venv/
+
+# PyCharm
+.idea/
+
+# MyPy
 .mypy_cache/
+
+# Coverage
+.coverage
+htmlcov/

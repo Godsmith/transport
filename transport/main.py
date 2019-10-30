@@ -1,5 +1,6 @@
 """Main entry point for the program"""
 
+
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.graphics import Color, Ellipse, Line, InstructionGroup
@@ -117,7 +118,7 @@ class GridWidget(Widget):
 class MyPaintApp(App):
     """The main app of the game."""
 
-    def build(self):  # pylint: disable=no-self-use
+    def build(self):  # pylint: disable=no-self-use; # pragma: no cover
         """Called when the app is created."""
         layout = ScatterLayout(translation_touches=2, do_rotation=False)
         widget = GridWidget(Grid(16, 16))
@@ -126,7 +127,7 @@ class MyPaintApp(App):
         return layout
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     MyPaintApp().run()
 
 # def main():

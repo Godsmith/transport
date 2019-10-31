@@ -1,14 +1,24 @@
 """Main entry point for the program"""
 
-
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.graphics import Color, Ellipse, Line, InstructionGroup
 from kivy.uix.scatterlayout import ScatterLayout
 from kivy.uix.widget import Widget
+
+from kivy.graphics.vertex_instructions import Rectangle
+
+from transport.factory import Factory
 from transport.path import Path, Point
 
 from transport.grid import Grid
+from transport.resource import Resource
+
+COLOR_FROM_RESOURCE = {
+    Resource.BLUE: Color(0, 1, 1),
+    Resource.RED: Color(1, 0, 0),
+    None: Color(0.2, 0.2, 0.2),
+}
 
 
 class GridWidget(Widget):
@@ -21,11 +31,13 @@ class GridWidget(Widget):
         self.bind(size=self._repaint_gridlines)
         self.gridlines = None
         self.paths = None
+        self.entity_instruction_groups = []
 
     def update(self, dt):
         """Update all contents to the next frame"""
         self.grid.update(dt)
         self._paint_paths()
+        self._paint_entities()
 
     def _repaint_gridlines(self, instance, value):  # pylint: disable=unused-argument
         self._paint_gridlines()
@@ -59,6 +71,49 @@ class GridWidget(Widget):
             )
             self.paths.add(Ellipse(pos=(x - d / 2, y - d / 2), size=(d, d)))
         self.canvas.add(self.paths)
+
+    def _paint_entities(self):
+        for instruction_group in self.entity_instruction_groups:
+            self.canvas.remove(instruction_group)
+        self.entity_instruction_groups = []
+
+        for position, entity in self.grid.entities.items():
+            instruction_groups = self._paint_divided_square(
+                position.x,
+                position.y,
+                top_color=COLOR_FROM_RESOURCE[entity.consumes],
+                bottom_color=COLOR_FROM_RESOURCE[entity.creates],
+            )
+            self.entity_instruction_groups.extend(instruction_groups)
+
+        for instruction_group in self.entity_instruction_groups:
+            self.canvas.add(instruction_group)
+
+    def _paint_divided_square(
+        self, x_index: int, y_index: int, top_color: Color, bottom_color: Color
+    ):
+        instruction_group = InstructionGroup()
+        x, y = self._to_coordinates(x_index, y_index)
+        bottom_left_x = x - self._cell_width / 2
+        bottom_left_y = y - self._cell_height / 2
+        instruction_group.add(bottom_color)
+        instruction_group.add(
+            Rectangle(
+                pos=(bottom_left_x, bottom_left_y),
+                size=(self._cell_width, self._cell_height / 2),
+            )
+        )
+
+        instruction_group2 = InstructionGroup()
+        middle_left_y = y
+        instruction_group2.add(top_color)
+        instruction_group2.add(
+            Rectangle(
+                pos=(bottom_left_x, middle_left_y),
+                size=(self._cell_width, self._cell_height / 2),
+            )
+        )
+        return [instruction_group, instruction_group2]
 
     def _position_partway_between_two_cells(
         self, point1: Point, point2: Point, fraction: float
@@ -121,10 +176,17 @@ class MyPaintApp(App):
     def build(self):  # pylint: disable=no-self-use; # pragma: no cover
         """Called when the app is created."""
         layout = ScatterLayout(translation_touches=2, do_rotation=False)
-        widget = GridWidget(Grid(16, 16))
+        widget = GridWidget(self._grid())
         Clock.schedule_interval(widget.update, 1.0 / 60.0)
         layout.add_widget(widget)
         return layout
+
+    @staticmethod
+    def _grid():
+        grid = Grid(16, 16)
+        grid.add(Factory(creates=Resource.BLUE), Point(5, 5))
+        grid.add(Factory(consumes=Resource.BLUE), Point(10, 10))
+        return grid
 
 
 if __name__ == "__main__":  # pragma: no cover

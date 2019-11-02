@@ -32,8 +32,3 @@ class Grid(Model):
     def add_path(self, path: Path):
         """Add a path to the grid."""
         self._paths.append(path)
-
-    def update(self, dt):
-        """Tick forward a certain time."""
-        for path in self.paths:
-            path.update(dt)

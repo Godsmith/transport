@@ -176,10 +176,10 @@ name-group=
 include-naming-hint=yes
 
 # Regular expression matching correct function names
-function-rgx=[a-z_][a-z0-9_]{2,50}$
+function-rgx=[a-z_][a-z0-9_]{2,100}$
 
 # Naming hint for function names
-function-name-hint=[a-z_][a-z0-9_]{2,50}$
+function-name-hint=[a-z_][a-z0-9_]{2,100}$
 
 # Regular expression matching correct variable names
 variable-rgx=[a-z_][a-z0-9_]{2,30}$

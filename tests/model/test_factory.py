@@ -43,3 +43,10 @@ def test_start_production_when_free_capacity():
     factory.pop()
     factory.update(1.1)
     factory.resources = [Resource.RED]
+
+
+def test_a_factory_producing_none_shall_not_produce_anything():
+    """If it produces None, nothing shall be produced."""
+    factory = Factory(0, 0, creates=None, interval=1, max_capacity=1)
+    factory.update(1.1)
+    assert factory.resources == []

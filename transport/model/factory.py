@@ -27,7 +27,7 @@ class Factory:
 
     def update(self, dt):
         """Step forward in time."""
-        if len(self.resources) < self.max_capacity:
+        if len(self.resources) < self.max_capacity and self.creates:
             self.time_to_next_production -= dt
             if self.time_to_next_production <= 0:
                 self.time_to_next_production += self.interval

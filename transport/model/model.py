@@ -26,7 +26,9 @@ class Model(ABC):
         """Add a path to the model"""
         raise NotImplementedError
 
-    @abstractmethod
     def update(self, dt):
-        """Go to the next time step."""
-        raise NotImplementedError
+        """Tick forward a certain time."""
+        for path in self.paths:
+            path.update(dt)
+        for factory in self.factories:
+            factory.update(dt)

@@ -11,6 +11,6 @@ from transport.view.grid_widget import GridWidget
 if __name__ == "__main__":  # pragma: no cover
     WIDTH = 16
     GRID = Grid(WIDTH, WIDTH)
-    GRID.add(Factory(x=5, y=5, creates=Resource.BLUE))
-    GRID.add(Factory(x=10, y=10, consumes=Resource.BLUE))
+    GRID.add(Factory(x=5, y=5, creates=Resource.BLUE, max_capacity=5))
+    GRID.add(Factory(x=10, y=10, consumes=Resource.BLUE, max_capacity=5))
     Controller(GRID, TransportAppView(GridWidget(WIDTH))).run()

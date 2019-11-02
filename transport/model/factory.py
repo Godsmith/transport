@@ -1,5 +1,5 @@
 """Contains the Factory class."""
-from transport.resource import Resource
+from transport.model.resource import Resource
 
 
 class Factory:

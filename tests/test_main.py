@@ -2,11 +2,14 @@
 
 # pylint: disable=protected-access
 
-from kivy.graphics.instructions import Instruction
+from kivy.graphics.instructions import InstructionGroup
 
-from transport.grid import Grid
-from transport.main import GridWidget
-from transport.path import Point, Path
+from transport.controller import Controller
+from transport.model.factory import Factory
+from transport.view.app import TransportAppView
+from transport.view.grid_widget import GridWidget
+from transport.model.grid import Grid
+from transport.model.path import Point, Path
 
 
 def test_path_created_on_touch_down():
@@ -21,9 +24,13 @@ def test_path_created_on_touch_down():
         |       |       |
         -----------------
     """
-    widget = GridWidget(Grid(2, 2))
+    grid = Grid(2, 2)
+    widget = GridWidget(2)
+    Controller(grid, TransportAppView(widget))
+
     widget.on_touch_down(Point(widget.width * 1 / 4, widget.height * 3 / 4))
-    assert widget.grid.paths == [Path(Point(0, 1))]
+
+    assert grid.paths == [Path(Point(0, 1))]
 
 
 def test_path_created_on_touch_move():
@@ -39,26 +46,33 @@ def test_path_created_on_touch_move():
         |       |       |
         -----------------
     """
-    widget = GridWidget(Grid(2, 2))
+    grid = Grid(2, 2)
+    widget = GridWidget(2)
+    Controller(grid, TransportAppView(widget))
+
     widget.on_touch_down(Point(widget.width * 1 / 4, widget.height * 1 / 3))
     widget.on_touch_move(Point(widget.width * 1 / 4, widget.height * 3 / 4))
 
     expected = Path(Point(0, 0))
     expected.append(Point(0, 1))
-    assert widget.grid.paths == [expected]
+    assert grid.paths == [expected]
 
 
 def test_update():
-    """ Test just so that nothing crashes when calling the update method."""
+    """ Test. just so that nothing crashes when calling the update method."""
     grid = Grid(2, 2)
     grid.add_path(Path(Point(0, 0)))
-    widget = GridWidget(grid)
-    widget.paths = Instruction()
-    widget.update(0.1)
+    grid.add(Factory(), Point(1, 1))
+    widget = GridWidget(2)
+    widget.paths = InstructionGroup()
+    widget.factories = [InstructionGroup()]
+    controller = Controller(grid, TransportAppView(widget))
+
+    controller.update(0.1)
 
 
 def test_repaint_gridlines():
     """ Test just so that nothing crashes."""
-    widget = GridWidget(Grid(2, 2))
-    widget.gridlines = Instruction()
+    widget = GridWidget(2)
+    widget.gridlines = InstructionGroup()
     widget._repaint_gridlines(None, None)

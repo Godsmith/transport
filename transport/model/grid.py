@@ -1,8 +1,9 @@
 """This module contains the Grid class."""
-from transport.path import Path
+from transport.model.model import Model
+from transport.model.path import Path
 
 
-class Grid:
+class Grid(Model):
     """The grid class is an abstract representation of the grid which all factories and
     paths are built on.
 
@@ -13,16 +14,24 @@ class Grid:
     def __init__(self, width, height):
         self.height = height
         self.width = width
-        self.entities = {}
-        self.paths = []
+        self._factories = {}
+        self._paths = []
 
-    def add(self, entity, position):
-        """Add an entity to a specific position."""
-        self.entities[position] = entity
+    @property
+    def paths(self):
+        return self._paths
+
+    @property
+    def factories(self):
+        return self._factories
+
+    def add(self, factory, position):
+        """Add a factory to a specific position."""
+        self._factories[position] = factory
 
     def add_path(self, path: Path):
         """Add a path to the grid."""
-        self.paths.append(path)
+        self._paths.append(path)
 
     def update(self, dt):
         """Tick forward a certain time."""

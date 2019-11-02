@@ -1,7 +1,7 @@
 """Test cases for the path.py modules."""
 
 
-from transport.path import Path, Point
+from transport.model.path import Path, Point
 
 
 def test_moving():

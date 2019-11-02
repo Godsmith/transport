@@ -24,8 +24,8 @@ class GridWidget(Widget):
         super(GridWidget, self).__init__()
         self.rows = rows
         self.bind(size=self._repaint_gridlines)
-        self.gridlines = InstructionGroup
-        self.paths = InstructionGroup
+        self.gridlines = InstructionGroup()
+        self.paths = InstructionGroup()
         self.factories: List[InstructionGroup] = []
         self.touch_down_callback = lambda x_index, y_index: None
         self.touch_move_callback = lambda x_index, y_index: None

@@ -1,5 +1,5 @@
 """Contains the GridWidget class"""
-from typing import Iterable, Dict, List
+from typing import Iterable, List
 
 from kivy.graphics.context_instructions import Color
 from kivy.graphics.instructions import InstructionGroup
@@ -30,7 +30,7 @@ class GridWidget(Widget):
         self.touch_down_callback = lambda x_index, y_index: None
         self.touch_move_callback = lambda x_index, y_index: None
 
-    def update(self, paths: Iterable[Path], factories: Dict[Point, Factory]):
+    def update(self, paths: Iterable[Path], factories: List[Factory]):
         """Update all contents to the next frame"""
         self._paint_paths(paths)
         self._paint_factories(factories)
@@ -68,15 +68,15 @@ class GridWidget(Widget):
             self.paths.add(Ellipse(pos=(x - d / 2, y - d / 2), size=(d, d)))
         self.canvas.add(self.paths)
 
-    def _paint_factories(self, factory_from_point: Dict[Point, Factory]):
+    def _paint_factories(self, factories: List[Factory]):
         for instruction_group in self.factories:
             self.canvas.remove(instruction_group)
         self.factories = []
 
-        for point, factory in factory_from_point.items():
+        for factory in factories:
             instruction_groups = self._paint_divided_square(
-                point.x,
-                point.y,
+                factory.x,
+                factory.y,
                 top_color=COLOR_FROM_RESOURCE[factory.consumes],
                 bottom_color=COLOR_FROM_RESOURCE[factory.creates],
             )

@@ -1,9 +1,9 @@
 """ Contains the View interface """
 from abc import ABC, abstractmethod
-from typing import Iterable, Dict, Callable
+from typing import Iterable, Callable, List
 
 from transport.model.factory import Factory
-from transport.model.path import Path, Point
+from transport.model.path import Path
 
 
 class View(ABC):
@@ -15,7 +15,7 @@ class View(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def update(self, paths: Iterable[Path], factories: Dict[Point, Factory]):
+    def update(self, paths: Iterable[Path], factories: List[Factory]):
         """Update the view with new data. Typically called every frame."""
         raise NotImplementedError
 

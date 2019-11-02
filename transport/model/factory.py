@@ -9,11 +9,15 @@ class Factory:
 
     def __init__(
         self,
+        x: int,
+        y: int,
         creates: Resource = None,
         consumes: Resource = None,
         interval: float = 1.0,
         max_capacity: int = 1,
     ):
+        self.x = x
+        self.y = y
         self.creates = creates
         self.consumes = consumes
         self.interval = interval

@@ -62,7 +62,7 @@ def test_update():
     """ Test. just so that nothing crashes when calling the update method."""
     grid = Grid(2, 2)
     grid.add_path(Path(Point(0, 0)))
-    grid.add(Factory(), Point(1, 1))
+    grid.add(Factory(x=1, y=1))
     widget = GridWidget(2)
     widget.paths = InstructionGroup()
     widget.factories = [InstructionGroup()]

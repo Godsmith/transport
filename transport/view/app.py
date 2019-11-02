@@ -1,12 +1,12 @@
 """Contains the TransportAppView class. """
-from typing import Iterable, Dict
+from typing import Iterable, List
 
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.uix.scatterlayout import ScatterLayout
 
 from transport.model.factory import Factory
-from transport.model.path import Path, Point
+from transport.model.path import Path
 from transport.view.grid_widget import GridWidget
 from transport.view.view import View
 
@@ -22,7 +22,7 @@ class TransportAppView(View):
     def run(self):
         _TransportApp(self._grid_widget).run()
 
-    def update(self, paths: Iterable[Path], factories: Dict[Point, Factory]):
+    def update(self, paths: Iterable[Path], factories: List[Factory]):
         self._grid_widget.update(paths=paths, factories=factories)
 
     def set_update_callback(self, method):

@@ -14,7 +14,7 @@ class Grid(Model):
     def __init__(self, width, height):
         self.height = height
         self.width = width
-        self._factories = {}
+        self._factories = []
         self._paths = []
 
     @property
@@ -25,9 +25,9 @@ class Grid(Model):
     def factories(self):
         return self._factories
 
-    def add(self, factory, position):
+    def add(self, factory):
         """Add a factory to a specific position."""
-        self._factories[position] = factory
+        self._factories.append(factory)
 
     def add_path(self, path: Path):
         """Add a path to the grid."""

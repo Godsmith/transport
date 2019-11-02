@@ -1,9 +1,9 @@
 """Contains the Model interface."""
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import List
 
 from transport.model.factory import Factory
-from transport.model.path import Path, Point
+from transport.model.path import Path
 
 
 class Model(ABC):
@@ -17,7 +17,7 @@ class Model(ABC):
 
     @property
     @abstractmethod
-    def factories(self) -> Dict[Point, Factory]:
+    def factories(self) -> List[Factory]:
         """Return all factories in the model."""
         raise NotImplementedError
 

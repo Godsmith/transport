@@ -23,7 +23,7 @@ class Path(list):
             self._next_square()
 
     def _next_square(self):
-        if len(self) > 0:
+        if len(self) > 1:
             self._square_index += self.direction
             if self._square_index == 0 or self._square_index == len(self) - 1:
                 self.direction *= -1

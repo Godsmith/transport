@@ -28,3 +28,13 @@ def test_reversing():
 
     assert path.point_agent_is_leaving == Point(0, 2)
     assert path.point_agent_is_approaching == Point(0, 1)
+
+
+def test_single_point_path_not_crashing():
+    """Previously, creating a single-point path crashed the program after one second."""
+    path = Path(Point(0, 0))
+
+    path.update(1.1)
+
+    assert path.point_agent_is_leaving == Point(0, 0)
+    assert path.point_agent_is_approaching == Point(0, 0)

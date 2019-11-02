@@ -3,18 +3,12 @@ from typing import Iterable, List
 
 from kivy.graphics.context_instructions import Color
 from kivy.graphics.instructions import InstructionGroup
-from kivy.graphics.vertex_instructions import Line, Ellipse, Rectangle
+from kivy.graphics.vertex_instructions import Line, Ellipse
 from kivy.uix.widget import Widget
 
 from transport.model.factory import Factory
 from transport.model.path import Path, Point
-from transport.model.resource import Resource
-
-COLOR_FROM_RESOURCE = {
-    Resource.BLUE: Color(0, 1, 1),
-    Resource.RED: Color(1, 0, 0),
-    None: Color(0.2, 0.2, 0.2),
-}
+from transport.view.factory import FactoryView
 
 
 class GridWidget(Widget):
@@ -74,42 +68,15 @@ class GridWidget(Widget):
         self.factories = []
 
         for factory in factories:
-            instruction_groups = self._paint_divided_square(
-                factory.x,
-                factory.y,
-                top_color=COLOR_FROM_RESOURCE[factory.consumes],
-                bottom_color=COLOR_FROM_RESOURCE[factory.creates],
+            x, y = self._to_coordinates(factory.x, factory.y)
+            self.factories.extend(
+                FactoryView(
+                    factory, x, y, self._cell_width, self._cell_height
+                ).instruction_groups
             )
-            self.factories.extend(instruction_groups)
 
         for instruction_group in self.factories:
             self.canvas.add(instruction_group)
-
-    def _paint_divided_square(
-        self, x_index: int, y_index: int, top_color: Color, bottom_color: Color
-    ):
-        instruction_group = InstructionGroup()
-        x, y = self._to_coordinates(x_index, y_index)
-        bottom_left_x = x - self._cell_width / 2
-        bottom_left_y = y - self._cell_height / 2
-        instruction_group.add(bottom_color)
-        instruction_group.add(
-            Rectangle(
-                pos=(bottom_left_x, bottom_left_y),
-                size=(self._cell_width, self._cell_height / 2),
-            )
-        )
-
-        instruction_group2 = InstructionGroup()
-        middle_left_y = y
-        instruction_group2.add(top_color)
-        instruction_group2.add(
-            Rectangle(
-                pos=(bottom_left_x, middle_left_y),
-                size=(self._cell_width, self._cell_height / 2),
-            )
-        )
-        return [instruction_group, instruction_group2]
 
     def _position_partway_between_two_cells(
         self, point1: Point, point2: Point, fraction: float

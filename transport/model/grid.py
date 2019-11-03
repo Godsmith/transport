@@ -1,6 +1,6 @@
 """This module contains the Grid class."""
 from transport.interfaces.model import Model
-from transport.model.path import Path
+from transport.model.path import Path, Point
 
 
 class Grid(Model):
@@ -29,6 +29,11 @@ class Grid(Model):
         """Add a factory to a specific position."""
         self._factories.append(factory)
 
+    def end_of_line(self, path: Path, point: Point):
+        """This is called when a certain Path reaches end of the line at a certain
+        Point"""
+
     def add_path(self, path: Path):
         """Add a path to the grid."""
         self._paths.append(path)
+        path.set_end_of_line_callback(self.end_of_line)

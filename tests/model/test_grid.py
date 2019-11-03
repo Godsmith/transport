@@ -52,7 +52,7 @@ def test_agent_picks_up_resource():
     grid.update(1.1)
 
     assert factory.resources == []
-    assert path.resource == Resource.BLUE
+    assert path.resources == [Resource.BLUE]
 
 
 def test_agent_continues_when_stopping_by_empty_factory():
@@ -69,7 +69,7 @@ def test_agent_continues_when_stopping_by_empty_factory():
     grid.update(1.1)
 
     assert factory.resources == []
-    assert path.resource is None
+    assert path.resources == []
 
 
 def test_agent_reversing_adjacent_to_no_stations():

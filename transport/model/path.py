@@ -1,6 +1,6 @@
 """Module containing the Path class."""
 from collections import namedtuple
-from typing import Callable, Optional, List
+from typing import Callable, List
 
 from transport.model.resource import Resource
 
@@ -17,7 +17,7 @@ class Path:
         self.direction = 1
         self.distance_to_next_square = 0.0
         self.speed = speed
-        self.resource: Optional[Resource] = None
+        self.resources: List[Resource] = []
         self._end_of_line_callback = lambda x, y: None
 
     def __eq__(self, other):

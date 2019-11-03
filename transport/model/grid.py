@@ -36,7 +36,7 @@ class Grid(Model):
         Point"""
         factory = self._one_adjacent_factory(point)
         if factory.resources:
-            path.resource = factory.pop()
+            path.resources.append(factory.pop())
 
     def add_path(self, path: Path):
         """Add a path to the grid."""

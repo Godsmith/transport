@@ -62,3 +62,6 @@ class Path:
         if len(self) == 1:
             return self[0]
         return self[self._square_index + self.direction]
+
+    def pop(self) -> Resource:
+        """Remove the resource that is currently carried and return it."""

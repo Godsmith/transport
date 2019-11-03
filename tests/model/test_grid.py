@@ -55,6 +55,61 @@ def test_agent_picks_up_resource():
     assert path.resources == [Resource.BLUE]
 
 
+def test_agent_does_not_pick_up_resource_if_already_carrying():
+    """Assert that when an agent reaches end of the line, it does not pick up a resource
+    from an adjacent factory if it is already carrying something."""
+    factory = Factory(x=0, y=0, max_capacity=1)
+    factory.resources = [Resource.BLUE]
+
+    path = Path(Point(1, 1))
+    path.append(Point(0, 1))
+    path.resources = [Resource.BLUE]
+
+    grid = Grid(3, 3)
+    grid.add(factory)
+    grid.add_path(path)
+
+    grid.update(1.1)
+
+    assert factory.resources == [Resource.BLUE]
+
+
+def test_agent_drops_off_resource():
+    """Assert that when an agent reaches end of the line, it drops off a resource
+    to a nearby accepting factory"""
+    factory = Factory(x=0, y=0, consumes=Resource.BLUE, max_capacity=1)
+
+    path = Path(Point(1, 1))
+    path.append(Point(0, 1))
+    path.resources = [Resource.BLUE]
+
+    grid = Grid(3, 3)
+    grid.add(factory)
+    grid.add_path(path)
+
+    grid.update(1.1)
+
+    assert path.resources == []
+
+
+def test_agent_does_not_drop_off_resource_at_wrong_factory():
+    """Assert that when an agent reaches end of the line, if there is a type of factory
+    that is not the same as the resource the agent is carrying, nothing happens."""
+    factory = Factory(x=0, y=0, consumes=Resource.RED, max_capacity=1)
+
+    path = Path(Point(1, 1))
+    path.append(Point(0, 1))
+    path.resource = Resource.BLUE
+
+    grid = Grid(3, 3)
+    grid.add(factory)
+    grid.add_path(path)
+
+    grid.update(1.1)
+
+    assert path.resource is Resource.BLUE
+
+
 def test_agent_continues_when_stopping_by_empty_factory():
     """If the station that the agent reverses by is empty, nothing shall happen"""
     factory = Factory(x=0, y=0, max_capacity=1)

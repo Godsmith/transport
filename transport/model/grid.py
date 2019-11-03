@@ -35,8 +35,11 @@ class Grid(Model):
         """This is called when a certain Path reaches end of the line at a certain
         Point"""
         factory = self._one_adjacent_factory(point)
-        if factory.resources:
+        if factory.resources and not path.resources:
             path.resources.append(factory.pop())
+        for resource in path.resources:
+            if factory.consumes == resource:
+                path.resources.remove(resource)
 
     def add_path(self, path: Path):
         """Add a path to the grid."""

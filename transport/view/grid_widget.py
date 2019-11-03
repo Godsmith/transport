@@ -54,8 +54,8 @@ class GridWidget(Widget):
         self.paths = []
 
         for grid_path in grid_paths:
-            self.paths.append(
-                PathView(grid_path, self.grid_properties).instruction_group
+            self.paths.extend(
+                PathView(grid_path, self.grid_properties).instruction_groups
             )
         for instruction_group in self.paths:
             self.canvas.add(instruction_group)

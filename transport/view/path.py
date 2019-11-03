@@ -15,14 +15,16 @@ class PathView:
         self._grid_properties = grid_properties
         self._grid_path = grid_path
 
-        self.instruction_group = InstructionGroup()
-        self.instruction_group.add(Color(1, 0, 0))
+        instruction_group = InstructionGroup()
+        instruction_group.add(Color(1, 0, 0))
         points = [grid_properties.to_pixels(*point) for point in grid_path]
-        self.instruction_group.add(Line(points=points))
+        instruction_group.add(Line(points=points))
 
         d = 15
         x, y = self._agent_position
-        self.instruction_group.add(Ellipse(pos=(x - d / 2, y - d / 2), size=(d, d)))
+        instruction_group.add(Ellipse(pos=(x - d / 2, y - d / 2), size=(d, d)))
+
+        self.instruction_groups = [instruction_group]
 
     @property
     def _agent_position(self):

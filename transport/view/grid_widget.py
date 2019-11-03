@@ -3,13 +3,14 @@ from typing import Iterable, List
 
 from kivy.graphics.context_instructions import Color
 from kivy.graphics.instructions import InstructionGroup
-from kivy.graphics.vertex_instructions import Line, Ellipse
+from kivy.graphics.vertex_instructions import Line
 from kivy.uix.widget import Widget
 
 from transport.model.factory import Factory
 from transport.model.path import Path
 from transport.view.factory import FactoryView
 from transport.view.grid_properties import GridProperties
+from transport.view.path import PathView
 
 
 class GridWidget(Widget):
@@ -53,21 +54,9 @@ class GridWidget(Widget):
         self.paths = []
 
         for grid_path in grid_paths:
-            instruction_group = InstructionGroup()
-            instruction_group.add(Color(1, 0, 0))
-            new_grid_path = [
-                self.grid_properties.to_pixels(*point) for point in grid_path
-            ]
-            instruction_group.add(Line(points=new_grid_path))
-
-            d = 15
-            x, y = self.grid_properties.position_partway_between_two_cells(
-                grid_path.point_agent_is_leaving,
-                grid_path.point_agent_is_approaching,
-                grid_path.distance_to_next_square,
+            self.paths.append(
+                PathView(grid_path, self.grid_properties).instruction_group
             )
-            instruction_group.add(Ellipse(pos=(x - d / 2, y - d / 2), size=(d, d)))
-            self.paths.append(instruction_group)
         for instruction_group in self.paths:
             self.canvas.add(instruction_group)
 

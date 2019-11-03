@@ -1,7 +1,6 @@
 """Contains the GridProperties class."""
 from typing import Tuple
 
-from transport.model.path import Point
 from transport.util import index_of_closest
 
 
@@ -13,14 +12,6 @@ class GridProperties:
         self.width = width
         self.height = height
         self.rows = rows
-
-    def position_partway_between_two_cells(
-        self, point1: Point, point2: Point, fraction: float
-    ):
-        """Find a position partway between two cells. """
-        x1, y1 = self.to_pixels(*point1)
-        x2, y2 = self.to_pixels(*point2)
-        return x1 + (x2 - x1) * fraction, y1 + (y2 - y1) * fraction
 
     @property
     def cell_width(self) -> float:

@@ -2,9 +2,10 @@
 
 from kivy.graphics.context_instructions import Color
 from kivy.graphics.instructions import InstructionGroup
-from kivy.graphics.vertex_instructions import Line, Ellipse
+from kivy.graphics.vertex_instructions import Line, Ellipse, Rectangle
 
 from transport.model.path import Path
+from transport.view.constants import COLOR_FROM_RESOURCE
 from transport.view.grid_properties import GridProperties
 
 
@@ -15,16 +16,30 @@ class PathView:
         self._grid_properties = grid_properties
         self._grid_path = grid_path
 
-        instruction_group = InstructionGroup()
-        instruction_group.add(Color(1, 0, 0))
+        container_instruction_group = InstructionGroup()
+        container_instruction_group.add(Color(1, 0, 0))
         points = [grid_properties.to_pixels(*point) for point in grid_path]
-        instruction_group.add(Line(points=points))
+        container_instruction_group.add(Line(points=points))
 
         d = 15
         x, y = self._agent_position
-        instruction_group.add(Ellipse(pos=(x - d / 2, y - d / 2), size=(d, d)))
+        container_instruction_group.add(
+            Ellipse(pos=(x - d / 2, y - d / 2), size=(d, d))
+        )
 
-        self.instruction_groups = [instruction_group]
+        self.instruction_groups = [container_instruction_group]
+
+        rectangle_diameter = 10
+        for resource in grid_path.resources:
+            resource_instruction_group = InstructionGroup()
+            resource_instruction_group.add(COLOR_FROM_RESOURCE[resource])
+            resource_instruction_group.add(
+                Rectangle(
+                    pos=(x - rectangle_diameter / 2, y - rectangle_diameter / 2),
+                    size=(rectangle_diameter, rectangle_diameter),
+                )
+            )
+            self.instruction_groups.append(resource_instruction_group)
 
     @property
     def _agent_position(self):

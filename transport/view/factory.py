@@ -7,14 +7,8 @@ from kivy.graphics.instructions import InstructionGroup
 from kivy.graphics.vertex_instructions import Rectangle
 
 from transport.model.factory import Factory
-from transport.model.resource import Resource
+from transport.view.constants import COLOR_FROM_RESOURCE
 from transport.view.grid_properties import GridProperties
-
-COLOR_FROM_RESOURCE = {
-    Resource.BLUE: Color(0, 1, 1),
-    Resource.RED: Color(1, 0, 0),
-    None: Color(0.2, 0.2, 0.2),
-}
 
 
 class FactoryView:

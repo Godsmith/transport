@@ -1,5 +1,7 @@
 """This module contains the Grid class."""
+
 from transport.interfaces.model import Model
+from transport.model.factory import Factory, NullFactory
 from transport.model.path import Path, Point
 
 
@@ -32,8 +34,24 @@ class Grid(Model):
     def end_of_line(self, path: Path, point: Point):
         """This is called when a certain Path reaches end of the line at a certain
         Point"""
+        factory = self._one_adjacent_factory(point)
+        if factory.resources:
+            path.resource = factory.pop()
 
     def add_path(self, path: Path):
         """Add a path to the grid."""
         self._paths.append(path)
         path.set_end_of_line_callback(self.end_of_line)
+
+    def _one_adjacent_factory(self, point: Point) -> Factory:
+        adjacent_points = [
+            Point(point.x - 1, point.y),
+            Point(point.x + 1, point.y),
+            Point(point.x, point.y - 1),
+            Point(point.x, point.y + 1),
+        ]
+        for factory in self._factories:
+            for adjacent_point in adjacent_points:
+                if (factory.x, factory.y) == adjacent_point:
+                    return factory
+        return NullFactory()

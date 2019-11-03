@@ -36,3 +36,10 @@ class Factory:
     def pop(self):
         """Delete and return the latest resource produced."""
         return self.resources.pop()
+
+
+class NullFactory(Factory):
+    """Null object for the Factory class, represents "no factory"."""
+
+    def __init__(self):
+        super(NullFactory, self).__init__(0, 0)

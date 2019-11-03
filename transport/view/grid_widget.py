@@ -7,8 +7,9 @@ from kivy.graphics.vertex_instructions import Line, Ellipse
 from kivy.uix.widget import Widget
 
 from transport.model.factory import Factory
-from transport.model.path import Path, Point
+from transport.model.path import Path
 from transport.view.factory import FactoryView
+from transport.view.grid_properties import GridProperties
 
 
 class GridWidget(Widget):
@@ -17,7 +18,8 @@ class GridWidget(Widget):
     def __init__(self, rows: int):
         super(GridWidget, self).__init__()
         self.rows = rows
-        self.bind(size=self._repaint_gridlines)
+        self.grid_properties = GridProperties(self.width, self.height, self.rows)
+        self.bind(size=self._resize)
         self.gridlines = InstructionGroup()
         self.paths: List[InstructionGroup] = []
         self.factories: List[InstructionGroup] = []
@@ -29,7 +31,8 @@ class GridWidget(Widget):
         self._paint_paths(paths)
         self._paint_factories(factories)
 
-    def _repaint_gridlines(self, instance, value):  # pylint: disable=unused-argument
+    def _resize(self, instance, value):  # pylint: disable=unused-argument
+        self.grid_properties = GridProperties(self.width, self.height, self.rows)
         self._paint_gridlines()
 
     def _paint_gridlines(self):
@@ -38,8 +41,8 @@ class GridWidget(Widget):
         self.gridlines = InstructionGroup()
         self.gridlines.add(Color(1, 1, 1))
         for line in range(0, self.rows + 1):
-            x = self._cell_width * line
-            y = self._cell_height * line
+            x = self.grid_properties.cell_width * line
+            y = self.grid_properties.cell_height * line
             self.gridlines.add(Line(points=((x, 0), (x, self.height))))
             self.gridlines.add(Line(points=((0, y), (self.width, y))))
         self.canvas.add(self.gridlines)
@@ -52,11 +55,13 @@ class GridWidget(Widget):
         for grid_path in grid_paths:
             instruction_group = InstructionGroup()
             instruction_group.add(Color(1, 0, 0))
-            new_grid_path = [self._to_coordinates(*point) for point in grid_path]
+            new_grid_path = [
+                self.grid_properties.to_pixels(*point) for point in grid_path
+            ]
             instruction_group.add(Line(points=new_grid_path))
 
             d = 15
-            x, y = self._position_partway_between_two_cells(
+            x, y = self.grid_properties.position_partway_between_two_cells(
                 grid_path.point_agent_is_leaving,
                 grid_path.point_agent_is_approaching,
                 grid_path.distance_to_next_square,
@@ -72,64 +77,19 @@ class GridWidget(Widget):
         self.factories = []
 
         for factory in factories:
-            x, y = self._to_coordinates(factory.x, factory.y)
             self.factories.extend(
-                FactoryView(
-                    factory, x, y, self._cell_width, self._cell_height
-                ).instruction_groups
+                FactoryView(factory, self.grid_properties).instruction_groups
             )
 
         for instruction_group in self.factories:
             self.canvas.add(instruction_group)
 
-    def _position_partway_between_two_cells(
-        self, point1: Point, point2: Point, fraction: float
-    ):
-        x1, y1 = self._to_coordinates(*point1)
-        x2, y2 = self._to_coordinates(*point2)
-        return x1 + (x2 - x1) * fraction, y1 + (y2 - y1) * fraction
-
-    @property
-    def _cell_width(self):
-        return self.width / self.rows
-
-    @property
-    def _cell_height(self):
-        return self.height / self.rows
-
-    @property
-    def _cell_x_centers(self):
-        for i in range(0, self.rows + 1):
-            yield self._cell_width * (i + 0.5)
-
-    @property
-    def _cell_y_centers(self):
-        for i in range(0, self.rows + 1):
-            yield self._cell_height * (i + 0.5)
-
-    @staticmethod
-    def _index_of_closest(value, values):
-        diffs = [abs(value - val) for val in values]
-        return diffs.index(min(diffs))
-
-    def _to_coordinates(self, x_index, y_index):
-        return list(self._cell_x_centers)[x_index], list(self._cell_y_centers)[y_index]
-
-    def _to_grid_coordinates(self, x, y):
-        x_index = self._index_of_closest(x, self._cell_x_centers)
-        y_index = self._index_of_closest(y, self._cell_y_centers)
-        return self._to_coordinates(x_index, y_index)
-
     def on_touch_down(self, touch):
         """Called when someone clicks or touches the widget."""
-        x, y = self._to_grid_coordinates(touch.x, touch.y)
-        x_index = self._index_of_closest(x, self._cell_x_centers)
-        y_index = self._index_of_closest(y, self._cell_y_centers)
-        self.touch_down_callback(x_index, y_index)
+        x, y = self.grid_properties.closest_indices(touch.x, touch.y)
+        self.touch_down_callback(x, y)
 
     def on_touch_move(self, touch):
         """Called when, after a touch down, someone drags inside the widget."""
-        x, y = self._to_grid_coordinates(touch.x, touch.y)
-        x_index = self._index_of_closest(x, self._cell_x_centers)
-        y_index = self._index_of_closest(y, self._cell_y_centers)
-        self.touch_move_callback(x_index, y_index)
+        x, y = self.grid_properties.closest_indices(touch.x, touch.y)
+        self.touch_move_callback(x, y)

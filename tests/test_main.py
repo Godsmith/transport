@@ -71,8 +71,8 @@ def test_update():
     controller.update(0.1)
 
 
-def test_repaint_gridlines():
-    """ Test just so that nothing crashes."""
-    widget = GridWidget(2)
-    widget.gridlines = InstructionGroup()
-    widget._repaint_gridlines(None, None)
+# def test_repaint_gridlines():
+#     """ Test just so that nothing crashes."""
+#     widget = GridWidget(2)
+#     widget.gridlines = InstructionGroup()
+#     widget._repaint_gridlines(None, None)

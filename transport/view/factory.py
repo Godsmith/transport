@@ -8,6 +8,7 @@ from kivy.graphics.vertex_instructions import Rectangle
 
 from transport.model.factory import Factory
 from transport.model.resource import Resource
+from transport.view.grid_properties import GridProperties
 
 COLOR_FROM_RESOURCE = {
     Resource.BLUE: Color(0, 1, 1),
@@ -19,21 +20,13 @@ COLOR_FROM_RESOURCE = {
 class FactoryView:
     """A visualization of a Factory object."""
 
-    def __init__(
-        self,
-        factory: Factory,
-        x: float,
-        y: float,
-        cell_width: float,
-        cell_height: float,
-    ):
+    def __init__(self, factory: Factory, grid_properties: GridProperties):
         self._top_color = COLOR_FROM_RESOURCE[factory.consumes]
         self._bottom_color = COLOR_FROM_RESOURCE[factory.creates]
         self._resource_count = len(factory.resources)
-        self._x = x
-        self._y = y
-        self._cell_width = cell_width
-        self._cell_height = cell_height
+        self._x, self._y = grid_properties.to_pixels(factory.x, factory.y)
+        self._cell_width = grid_properties.cell_width
+        self._cell_height = grid_properties.cell_height
 
         self.instruction_groups: List[InstructionGroup] = []
         self._paint_divided_square()

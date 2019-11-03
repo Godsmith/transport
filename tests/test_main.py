@@ -64,7 +64,7 @@ def test_update():
     grid.add_path(Path(Point(0, 0)))
     grid.add(Factory(x=1, y=1))
     widget = GridWidget(2)
-    widget.paths = InstructionGroup()
+    widget.paths = [InstructionGroup()]
     widget.factories = [InstructionGroup()]
     controller = Controller(grid, TransportAppView(widget))
 

@@ -19,7 +19,7 @@ class GridWidget(Widget):
         self.rows = rows
         self.bind(size=self._repaint_gridlines)
         self.gridlines = InstructionGroup()
-        self.paths = InstructionGroup()
+        self.paths: List[InstructionGroup] = []
         self.factories: List[InstructionGroup] = []
         self.touch_down_callback = lambda x_index, y_index: None
         self.touch_move_callback = lambda x_index, y_index: None
@@ -45,13 +45,15 @@ class GridWidget(Widget):
         self.canvas.add(self.gridlines)
 
     def _paint_paths(self, grid_paths: Iterable[Path]):
-        if self.paths:
-            self.canvas.remove(self.paths)
-        self.paths = InstructionGroup()
-        self.paths.add(Color(1, 0, 0))
+        for instruction_group in self.paths:
+            self.canvas.remove(instruction_group)
+        self.paths = []
+
         for grid_path in grid_paths:
+            instruction_group = InstructionGroup()
+            instruction_group.add(Color(1, 0, 0))
             new_grid_path = [self._to_coordinates(*point) for point in grid_path]
-            self.paths.add(Line(points=new_grid_path))
+            instruction_group.add(Line(points=new_grid_path))
 
             d = 15
             x, y = self._position_partway_between_two_cells(
@@ -59,8 +61,10 @@ class GridWidget(Widget):
                 grid_path.point_agent_is_approaching,
                 grid_path.distance_to_next_square,
             )
-            self.paths.add(Ellipse(pos=(x - d / 2, y - d / 2), size=(d, d)))
-        self.canvas.add(self.paths)
+            instruction_group.add(Ellipse(pos=(x - d / 2, y - d / 2), size=(d, d)))
+            self.paths.append(instruction_group)
+        for instruction_group in self.paths:
+            self.canvas.add(instruction_group)
 
     def _paint_factories(self, factories: List[Factory]):
         for instruction_group in self.factories:

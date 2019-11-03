@@ -29,6 +29,9 @@ class Path:
     def __len__(self):
         return len(self.points)
 
+    def __iter__(self):
+        return self.points.__iter__()
+
     def append(self, point: Point):
         """Add a new point to the list"""
         self.points.append(point)

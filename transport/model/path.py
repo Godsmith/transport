@@ -1,24 +1,37 @@
 """Module containing the Path class."""
 from collections import namedtuple
-from typing import Callable, Optional
+from typing import Callable, Optional, List
 
 from transport.model.resource import Resource
 
 Point = namedtuple("Point", ("x", "y"))
 
 
-class Path(list):
+class Path:
     """Represents a path which an agent travels on."""
 
     def __init__(self, point: Point, speed: float = 2):
-        super(Path, self).__init__()
-        self.append(point)
+        self.points: List[Point] = []
+        self.points.append(point)
         self._square_index = 0
         self.direction = 1
         self.distance_to_next_square = 0.0
         self.speed = speed
         self.resource: Optional[Resource] = None
         self._end_of_line_callback = lambda x, y: None
+
+    def __eq__(self, other):
+        return self.points == other.points
+
+    def __getitem__(self, item):
+        return self.points[item]
+
+    def __len__(self):
+        return len(self.points)
+
+    def append(self, point: Point):
+        """Add a new point to the list"""
+        self.points.append(point)
 
     def set_end_of_line_callback(self, method: Callable[["Path", Point], None]):
         """Set the method to be called when the agent reaches end of the line."""

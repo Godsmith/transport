@@ -5,10 +5,10 @@ from kivy.app import App
 from kivy.clock import Clock
 from kivy.uix.scatterlayout import ScatterLayout
 
+from transport.interfaces.view import View
 from transport.model.factory import Factory
 from transport.model.path import Path
 from transport.view.grid_widget import GridWidget
-from transport.view.view import View
 
 
 class TransportAppView(View):

@@ -1,7 +1,7 @@
 """Contains the Controller class."""
-from transport.model.model import Model
+from transport.interfaces.model import Model
+from transport.interfaces.view import View
 from transport.model.path import Path, Point
-from transport.view.view import View
 
 
 class Controller:

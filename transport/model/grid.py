@@ -1,5 +1,5 @@
 """This module contains the Grid class."""
-from transport.model.model import Model
+from transport.interfaces.model import Model
 from transport.model.path import Path
 
 

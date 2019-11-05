@@ -4,6 +4,7 @@ from typing import Iterable, List
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.uix.scatterlayout import ScatterLayout
+from kivy.config import Config
 
 from transport.interfaces.view import View
 from transport.model.factory import Factory
@@ -15,6 +16,7 @@ class TransportAppView(View):
     """Concrete class implementing the View interface using Kivy."""
 
     def __init__(self, grid_widget: GridWidget):
+        Config.read("config.ini")
         super(TransportAppView, self).__init__()
         self._update_callback = None
         self._grid_widget = grid_widget
@@ -46,6 +48,8 @@ class _TransportApp(App):
 
     def build(self):  # pylint: disable=no-self-use; # pragma: no cover
         """Called when the app is created."""
-        layout = ScatterLayout(translation_touches=2, do_rotation=False)
+        layout = ScatterLayout(
+            translation_touches=2, do_rotation=False, scale_min=0.2, scale_max=1.5
+        )
         layout.add_widget(self._grid_widget)
         return layout

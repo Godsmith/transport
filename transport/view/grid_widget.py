@@ -1,8 +1,9 @@
 """Contains the GridWidget class"""
-from typing import Iterable, List
+from typing import Iterable, List, Tuple
 
 from kivy.graphics.context_instructions import Color
 from kivy.graphics.instructions import InstructionGroup
+from kivy.graphics.transformation import Matrix
 from kivy.graphics.vertex_instructions import Line
 from kivy.uix.widget import Widget
 
@@ -75,10 +76,43 @@ class GridWidget(Widget):
 
     def on_touch_down(self, touch):
         """Called when someone clicks or touches the widget."""
-        x, y = self.grid_properties.closest_indices(touch.x, touch.y)
-        self.touch_down_callback(x, y)
+        scroll_step = 1.1
+        zoom_in = [scroll_step] * 3
+        zoom_out = [1 / scroll_step] * 3
+        if touch.button == "left":
+            x, y = self.grid_properties.closest_indices(touch.x, touch.y)
+            self.touch_down_callback(x, y)
+        elif touch.button == "right":
+            touch.ud["last_touch_pos"] = self._touch_position_relative_to_window(touch)
+        elif (
+            touch.button == "scrolldown"
+            and self.parent.parent.scale < self.parent.parent.scale_max
+        ):
+            self.parent.parent.apply_transform(
+                Matrix().scale(*zoom_in),
+                anchor=self._touch_position_relative_to_window(touch),
+            )
+        elif (
+            touch.button == "scrollup"
+            and self.parent.parent.scale > self.parent.parent.scale_min
+        ):
+            self.parent.parent.apply_transform(
+                Matrix().scale(*zoom_out),
+                anchor=self._touch_position_relative_to_window(touch),
+            )
+
+    def _touch_position_relative_to_window(self, touch) -> Tuple[float, float]:
+        return self.parent.parent.to_parent(*touch.pos)
 
     def on_touch_move(self, touch):
         """Called when, after a touch down, someone drags inside the widget."""
-        x, y = self.grid_properties.closest_indices(touch.x, touch.y)
-        self.touch_move_callback(x, y)
+        if touch.button == "left":
+            x, y = self.grid_properties.closest_indices(touch.x, touch.y)
+            self.touch_move_callback(x, y)
+        elif touch.button == "right":
+            if "last_touch_pos" in touch.ud:
+                x, y = self._touch_position_relative_to_window(touch)
+                last_touch_x, last_touch_y = touch.ud["last_touch_pos"]
+                touch.ud["last_touch_pos"] = (x, y)
+                translation = (x - last_touch_x, y - last_touch_y, 0)
+                self.parent.parent.apply_transform(Matrix().translate(*translation))

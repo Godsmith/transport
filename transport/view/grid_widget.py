@@ -28,6 +28,7 @@ class GridWidget(Widget):
         self.touch_down_callback = lambda x_index, y_index: None
         self.touch_move_callback = lambda x_index, y_index: None
         self.touch_up_callback = lambda: None
+        self.double_tap_callback = lambda x_index, y_index: None
 
     def update(self, paths: Iterable[Path], factories: List[Factory]):
         """Update all contents to the next frame"""
@@ -83,6 +84,8 @@ class GridWidget(Widget):
         if touch.button == "left":
             x, y = self.grid_properties.closest_indices(touch.x, touch.y)
             self.touch_down_callback(x, y)
+            if touch.is_double_tap:
+                self.double_tap_callback(x, y)
         elif touch.button == "right":
             touch.ud["last_touch_pos"] = self._touch_position_relative_to_window(touch)
         elif (

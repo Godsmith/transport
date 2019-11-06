@@ -13,6 +13,7 @@ class Controller:
         view.set_touch_move_callback(self.touch_move)
         view.set_touch_up_callback(self.touch_up)
         view.set_update_callback(self.update)
+        view.set_double_tap_callback(self.double_tap)
         self._view = view
 
     def run(self):
@@ -33,6 +34,15 @@ class Controller:
         """Called when the user releases the touch."""
         if len(self._model.paths[-1]) <= 1:
             del self._model.paths[-1]
+
+    def double_tap(self, x_index, y_index):
+        """Called when the user double taps a cell"""
+        path = next(
+            (path for path in self._model.paths if Point(x_index, y_index) in path),
+            None,
+        )
+        if path:
+            self._model.paths.remove(path)
 
     def update(self, dt: float):
         """Called each frame."""

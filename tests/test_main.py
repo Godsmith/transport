@@ -12,10 +12,14 @@ from transport.model.grid import Grid
 from transport.model.path import Point, Path
 
 
-class Touch(Point):
+class Touch:
     """Mock object simulating a touch event"""
 
-    button = "left"
+    def __init__(self, x, y, button="left", is_double_tap=False):
+        self.x = x
+        self.y = y
+        self.button = button
+        self.is_double_tap = is_double_tap
 
 
 def test_no_path_created_on_touch_down_and_then_up():
@@ -50,10 +54,39 @@ def test_path_created_on_touch_move():
 
     widget.on_touch_down(Touch(widget.width * 1 / 4, widget.height * 1 / 3))
     widget.on_touch_move(Touch(widget.width * 1 / 4, widget.height * 3 / 4))
+    widget.on_touch_up(Touch(widget.width * 1 / 4, widget.height * 3 / 4))
 
     expected = Path(Point(0, 0))
     expected.append(Point(0, 1))
     assert grid.paths == [expected]
+
+
+def test_double_tap_to_remove_path():
+    """ Test that a double tap in location A removes a Path in that location.
+        -----------------
+        |       |       |
+        |   B   |       |
+        |       |       |
+        -----------------
+        |       |       |
+        |   A   |       |
+        |       |       |
+        -----------------
+    """
+    grid = Grid(2, 2)
+    widget = GridWidget(2)
+    Controller(grid, TransportAppView(widget))
+
+    widget.on_touch_down(Touch(widget.width * 1 / 4, widget.height * 1 / 3))
+    widget.on_touch_move(Touch(widget.width * 1 / 4, widget.height * 3 / 4))
+    widget.on_touch_up(Touch(widget.width * 1 / 4, widget.height * 3 / 4))
+
+    widget.on_touch_down(
+        Touch(widget.width * 1 / 4, widget.height * 1 / 3, is_double_tap=True)
+    )
+    widget.on_touch_up(Touch(widget.width * 1 / 4, widget.height * 1 / 3))
+
+    assert grid.paths == []
 
 
 def test_update():

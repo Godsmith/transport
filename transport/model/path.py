@@ -32,6 +32,9 @@ class Path:
     def __iter__(self):
         return self.points.__iter__()
 
+    def __contains__(self, item):
+        return item in self.points
+
     def append(self, point: Point):
         """Add a new point to the list"""
         self.points.append(point)

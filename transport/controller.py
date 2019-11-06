@@ -11,6 +11,7 @@ class Controller:
         self._model = model
         view.set_touch_down_callback(self.touch_down)
         view.set_touch_move_callback(self.touch_move)
+        view.set_touch_up_callback(self.touch_up)
         view.set_update_callback(self.update)
         self._view = view
 
@@ -27,6 +28,11 @@ class Controller:
         point = Point(x_index, y_index)
         if self._model.paths[-1][-1] != point:
             self._model.paths[-1].append(point)
+
+    def touch_up(self) -> None:
+        """Called when the user releases the touch."""
+        if len(self._model.paths[-1]) <= 1:
+            del self._model.paths[-1]
 
     def update(self, dt: float):
         """Called each frame."""

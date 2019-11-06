@@ -33,3 +33,8 @@ class View(ABC):
     def set_touch_move_callback(self, method: Callable[[int, int], None]):
         """Set the method that is called when the touch move event happens"""
         raise NotImplementedError
+
+    @abstractmethod
+    def set_touch_up_callback(self, method: Callable[[], None]):
+        """Set the method that is called when the touch up event happens"""
+        raise NotImplementedError

@@ -37,6 +37,9 @@ class TransportAppView(View):
     def set_touch_move_callback(self, method):
         self._grid_widget.touch_move_callback = method
 
+    def set_touch_up_callback(self, method):
+        self._grid_widget.touch_up_callback = method
+
 
 class _TransportApp(App):
     """The main app of the game."""

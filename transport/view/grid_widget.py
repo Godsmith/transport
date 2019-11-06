@@ -27,6 +27,7 @@ class GridWidget(Widget):
         self.factories: List[InstructionGroup] = []
         self.touch_down_callback = lambda x_index, y_index: None
         self.touch_move_callback = lambda x_index, y_index: None
+        self.touch_up_callback = lambda: None
 
     def update(self, paths: Iterable[Path], factories: List[Factory]):
         """Update all contents to the next frame"""
@@ -116,3 +117,8 @@ class GridWidget(Widget):
                 touch.ud["last_touch_pos"] = (x, y)
                 translation = (x - last_touch_x, y - last_touch_y, 0)
                 self.parent.parent.apply_transform(Matrix().translate(*translation))
+
+    def on_touch_up(self, touch):
+        """Called when the user lifts their finger or releases their mouse button"""
+        if touch.button == "left":
+            self.touch_up_callback()

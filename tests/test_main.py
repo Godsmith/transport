@@ -12,25 +12,23 @@ from transport.model.grid import Grid
 from transport.model.path import Point, Path
 
 
-def test_path_created_on_touch_down():
-    """ Test that a touch in location A creates a Path starting and ending at A.
-        -----------------
-        |       |       |
-        |   A   |       |
-        |       |       |
-        -----------------
-        |       |       |
-        |       |       |
-        |       |       |
-        -----------------
-    """
+class Touch(Point):
+    """Mock object simulating a touch event"""
+
+    button = "left"
+
+
+def test_no_path_created_on_touch_down_and_then_up():
+    """ Test that no path is created by just a single touch down without touch move"""
     grid = Grid(2, 2)
     widget = GridWidget(2)
     Controller(grid, TransportAppView(widget))
 
-    widget.on_touch_down(Point(widget.width * 1 / 4, widget.height * 3 / 4))
+    touch = Touch(widget.width * 1 / 4, widget.height * 3 / 4)
+    widget.on_touch_down(touch)
+    widget.on_touch_up(touch)
 
-    assert grid.paths == [Path(Point(0, 1))]
+    assert grid.paths == []
 
 
 def test_path_created_on_touch_move():
@@ -50,8 +48,8 @@ def test_path_created_on_touch_move():
     widget = GridWidget(2)
     Controller(grid, TransportAppView(widget))
 
-    widget.on_touch_down(Point(widget.width * 1 / 4, widget.height * 1 / 3))
-    widget.on_touch_move(Point(widget.width * 1 / 4, widget.height * 3 / 4))
+    widget.on_touch_down(Touch(widget.width * 1 / 4, widget.height * 1 / 3))
+    widget.on_touch_move(Touch(widget.width * 1 / 4, widget.height * 3 / 4))
 
     expected = Path(Point(0, 0))
     expected.append(Point(0, 1))
